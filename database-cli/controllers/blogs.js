@@ -3,7 +3,7 @@ const express = require('express');
 const {blogFinder, tokenExtractor, blogFinderWithAuthorDetail} = require("../util/middleware");
 const {User} = require("../models");
 const {AuthError} = require("../util/errors");
-const {Op} = require("sequelize");
+const {Op, col} = require("sequelize");
 
 router = express.Router();
 
@@ -28,6 +28,9 @@ router.get('/', async (req, res) => {
         },
       ],
     },
+    order: [
+      ["likes", "DESC"]
+    ]
   })
   res.json(blogs)
 })

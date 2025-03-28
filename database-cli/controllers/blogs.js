@@ -1,17 +1,25 @@
 const Blog = require('../models/blog');
 const express = require('express');
-const {blogFinder} = require("../util/middleware");
+const {blogFinder, tokenExtractor} = require("../util/middleware");
+const {User} = require("../models");
 
 router = express.Router();
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll()
+  const blogs = await Blog.findAll({
+    attributes: {exclude: ['userId']},
+    include: {
+      model: User,
+      attributes: ['name']
+    }
+  })
   res.json(blogs)
 })
 
-router.post('/', async (req, res) => {
-  const blog = await Blog.create(req.body)
-  return res.json(blog)
+router.post('/', tokenExtractor, async (req, res) => {
+  const user = await User.findByPk(req.decodedToken.id)
+  const blog = await Blog.create({...req.body, userId: user.id})
+  res.json(blog)
 })
 
 router.get('/:id', blogFinder, async (req, res) => {
@@ -19,7 +27,7 @@ router.get('/:id', blogFinder, async (req, res) => {
 })
 
 router.put('/:id', blogFinder, async (req, res) => {
-  if(req.body.likes){
+  if (req.body.likes) {
     req.blog.likes = req.body.likes
   }
   await req.blog.save()

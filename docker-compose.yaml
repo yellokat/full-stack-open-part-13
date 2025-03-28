@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: notes-postgres
+    container_name: notes-postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-volume:/var/lib/postgresql/data

@@ -3,3 +3,6 @@ postgres-volume/
 
 # IDE related
 .idea/
+
+# node package files
+**/node_modules/

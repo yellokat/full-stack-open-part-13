@@ -1,0 +1,17 @@
+{
+  "name": "database-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"no tests implemented\""
+  },
+  "author": "Seungwon Jang",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.14.1",
+    "sequelize": "^6.37.7"
+  }
+}

@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize')
-const sequelize = require("../postgres/connection");
+const { sequelize } = require('../util/db')
 
 class Blog extends Model {}
 Blog.init({
@@ -21,7 +21,7 @@ Blog.init({
     allowNull: false
   },
   likes: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.INTEGER,
     defaultValue: 0
   },
 }, {

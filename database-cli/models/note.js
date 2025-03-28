@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize')
-const sequelize = require("../postgres/connection");
+const { sequelize } = require('../util/db')
 
 class Note extends Model {}
 Note.init({

@@ -15,10 +15,19 @@ router.get('/', async (req, res) => {
       attributes: ['name']
     },
     where: {
-      title:{
-        [Op.iLike]: req.query.search ? `%${req.query.search}%` : '%'
-      }
-    }
+      [Op.or]: [
+        {
+          title: {
+            [Op.iLike]: req.query.search ? `%${req.query.search}%` : '%'
+          },
+        },
+        {
+          author: {
+            [Op.iLike]: req.query.search ? `%${req.query.search}%` : '%'
+          },
+        },
+      ],
+    },
   })
   res.json(blogs)
 })
@@ -42,7 +51,7 @@ router.put('/:id', blogFinder, async (req, res) => {
 })
 
 router.delete('/:id', [tokenExtractor, blogFinderWithAuthorDetail], async (req, res) => {
-  if(req.blog.user.id !== req.decodedToken.id){
+  if (req.blog.user.id !== req.decodedToken.id) {
     throw new AuthError('permission denied.')
   }
   await req.blog.destroy()

@@ -1,7 +1,8 @@
 const Blog = require('../models/blog');
 const express = require('express');
-const {blogFinder, tokenExtractor} = require("../util/middleware");
+const {blogFinder, tokenExtractor, blogFinderWithAuthorDetail} = require("../util/middleware");
 const {User} = require("../models");
+const {AuthError} = require("../util/errors");
 
 router = express.Router();
 
@@ -34,10 +35,11 @@ router.put('/:id', blogFinder, async (req, res) => {
   res.json(req.blog)
 })
 
-router.delete('/:id', blogFinder, async (req, res) => {
-  if (req.blog) {
-    await req.blog.destroy()
+router.delete('/:id', [tokenExtractor, blogFinderWithAuthorDetail], async (req, res) => {
+  if(req.blog.user.id !== req.decodedToken.id){
+    throw new AuthError('permission denied.')
   }
+  await req.blog.destroy()
   res.status(204).end()
 })
 

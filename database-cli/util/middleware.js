@@ -23,6 +23,22 @@ const blogFinder = async (req, res, next) => {
   next()
 }
 
+const blogFinderWithAuthorDetail = async (req, res, next) => {
+  const targetId = req.params.id
+  if (targetId !== Number(targetId).toString()) {
+    throw new TypeError("ID must be a number.")
+  }
+  req.blog = await Blog.findByPk(targetId, {
+    include:{
+      model: User
+    }
+  })
+  if (!req.blog) {
+    throw new NotExistResourceError();
+  }
+  next()
+}
+
 const userFinder = async (req, res, next) => {
   const targetId = req.params.id
   if (targetId !== Number(targetId).toString()) {
@@ -51,6 +67,8 @@ const errorHandler = (error, request, response, next) => {
       return response.status(401).json({error: 'token invalid'})
     } else if (error.message.includes('token missing')) {
       return response.status(401).json({error: 'token missing'})
+    } else if (error.message.includes('permission denied')){
+      return response.status(401).json({error: 'permission denied'})
     }
   }
   next(error)
@@ -70,4 +88,11 @@ const tokenExtractor = (req, res, next) => {
   next()
 }
 
-module.exports = {noteFinder, blogFinder, userFinder, errorHandler, tokenExtractor}
+module.exports = {
+  noteFinder,
+  blogFinder,
+  userFinder,
+  errorHandler,
+  tokenExtractor,
+  blogFinderWithAuthorDetail,
+}

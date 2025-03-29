@@ -29,7 +29,7 @@ const blogFinderWithAuthorDetail = async (req, res, next) => {
     throw new TypeError("ID must be a number.")
   }
   req.blog = await Blog.findByPk(targetId, {
-    include:{
+    include: {
       model: User
     }
   })
@@ -52,11 +52,14 @@ const userFinder = async (req, res, next) => {
 }
 
 const errorHandler = (error, request, response, next) => {
+  console.log({error: `${error.name} - ${error.message}`})
   if (error.name === 'NotExistResourceError') {
     return response.status(404).send({error: 'No such resource exists.'})
   } else if (error.name === 'SequelizeValidationError') {
-    if (error.message.includes('Validation isEmail on username failed')) {
+    if (error.message.includes('username must be an email.')) {
       return response.status(400).send({error: error.message})
+    } else if (error.message.includes('on year failed')) {
+      return response.status(400).send({error: `field 'year' must be after 1991 and before 2025.`})
     } else {
       return response.status(400).send({error: 'Invalid input.'})
     }
@@ -67,11 +70,13 @@ const errorHandler = (error, request, response, next) => {
       return response.status(401).json({error: 'token invalid'})
     } else if (error.message.includes('token missing')) {
       return response.status(401).json({error: 'token missing'})
-    } else if (error.message.includes('permission denied')){
+    } else if (error.message.includes('permission denied')) {
       return response.status(401).json({error: 'permission denied'})
     }
+  } else {
+    return response.status(500).send()
   }
-  next(error)
+  // next(error)
 }
 
 const tokenExtractor = (req, res, next) => {

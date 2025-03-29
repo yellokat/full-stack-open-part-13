@@ -24,6 +24,14 @@ Blog.init({
     type: DataTypes.INTEGER,
     defaultValue: 0
   },
+  year:{
+    type: DataTypes.DATE,
+    allowNull: false,
+    validate:{
+      isAfter: "1991-01-01",
+      isBefore: "2025-12-31",
+    }
+  },
 }, {
   sequelize,
   underscored: true,
